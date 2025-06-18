@@ -44,27 +44,24 @@ ZalaChat là một ứng dụng chat thời gian thực với đầy đủ tính
 ### 1. Clone project
 
 
-git clone https://github.com/HoGiaKham/ZalaChatWeb.git
-cd ZalaChatWeb
+# git clone https://github.com/HoGiaKham/ZalaChatWeb.git
+# cd ZalaChatWeb
 
 ### 2. Backend (Node.js + Express + AWS SDK)
-cd zalachat-backend
-npm install
-cp .env.example .env
-node src/server.js
-node src/server.js
+# cd zalachat-backend
+# npm install
+# cp .env.example .env
+# node src/server.js
+# node src/server.js
 ### 3. Frontend (ReactJS)
-cd ../zalachat-frontend
-npm install
-cp env.example .env
-npm start
+# cd ../zalachat-frontend
+# npm install
+# cp env.example .env
+# npm start
 
 
 🌐 Công nghệ sử dụng
-Frontend: ReactJS, Axios, React Router, React Icons
-
-Backend: Node.js, Express, AWS Cognito, DynamoDB, S3
-
-Realtime: Socket.IO
-
-Khác: dotenv, bcryptjs, uuid, react-toastify
+- Frontend: ReactJS, Axios, React Router, React Icons
+- Backend: Node.js, Express, AWS Cognito, DynamoDB, S3
+- Realtime: Socket.IO
+- Khác: dotenv, bcryptjs, uuid, react-toastify
