@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";  // Thêm icon mắt từ react-icons
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ function Register() {
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
 
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);  // Thêm state để kiểm soát hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -17,9 +17,7 @@ function Register() {
   const navigate = useNavigate();
 
   const formatPhoneNumber = (phone) => {
-    if (phone.startsWith("0")) {
-      return "+84" + phone.slice(1);
-    }
+    if (phone.startsWith("0")) return "+84" + phone.slice(1);
     return phone;
   };
 
@@ -34,20 +32,18 @@ function Register() {
 
   const verifyEmailReal = async (email) => {
     if (!email) return;
-
     setIsCheckingEmail(true);
     setEmailError("");
 
     try {
       const response = await axios.get("https://emailverification.whoisxmlapi.com/api/v3", {
         params: {
-          apiKey: "at_K9LqgakdtGpzFy9EAaDCzsgrkTmtI", // ⚠️ Thay bằng API key thật
+          apiKey: "at_K9LqgakdtGpzFy9EAaDCzsgrkTmtI",
           emailAddress: email,
         },
       });
 
       const data = response.data;
-
       if (!data.smtpCheck || data.smtpCheck !== "true") {
         setEmailError("Email không tồn tại hoặc không hợp lệ.");
       }
@@ -61,7 +57,6 @@ function Register() {
 
   const handleRegister = async () => {
     if (phoneError || emailError || isCheckingEmail) return;
-
     const formattedPhone = formatPhoneNumber(phoneNumber);
 
     try {
@@ -71,11 +66,10 @@ function Register() {
         name,
         phoneNumber: formattedPhone,
       });
-
       navigate("/otp-confirm", { state: { username: response.data.username } });
     } catch (error) {
       const errMsg = error.response?.data?.error?.toLowerCase();
-      if (errMsg?.includes("phone") || errMsg?.includes("số điện thoại")) {
+      if (errMsg?.includes("phone")) {
         setPhoneError("Số điện thoại đã được sử dụng hoặc không hợp lệ.");
       } else {
         alert(error.response?.data?.error || "Đăng ký thất bại");
@@ -83,126 +77,177 @@ function Register() {
     }
   };
 
-  const goToLogin = () => {
-    navigate("/login");  // Chuyển đến trang đăng nhập
-  };
-
   return (
-    <div className="blur-container">
-      <h1 style={styles.title}>Đăng ký</h1>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h1 style={styles.title}>Đăng ký</h1>
 
-      <input
-        type="text"
-        placeholder="Họ tên"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={styles.input}
-      />
-
-      <input
-        type="text"
-        placeholder="Số điện thoại (VD: 0123456789)"
-        value={phoneNumber}
-        onChange={(e) => {
-          setPhoneNumber(e.target.value);
-          setPhoneError("");
-        }}
-        onBlur={() => validatePhoneNumber(phoneNumber)}
-        style={styles.input}
-      />
-      {phoneError && <p style={styles.error}>{phoneError}</p>}
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => {
-          setEmail(e.target.value);
-          setEmailError("");
-        }}
-        onBlur={() => verifyEmailReal(email)}
-        style={styles.input}
-      />
-      {emailError && <p style={styles.error}>{emailError}</p>}
-      {isCheckingEmail && <p style={styles.info}>Đang kiểm tra email...</p>}
-
-      <div style={styles.passwordContainer}>
         <input
-          type={showPassword ? "text" : "password"}  // Nếu showPassword = true, hiển thị mật khẩu, nếu không thì ẩn
-          placeholder="Mật khẩu"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          type="text"
+          placeholder="Họ tên"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           style={styles.input}
         />
+
+        <input
+          type="text"
+          placeholder="Số điện thoại (VD: 0123456789)"
+          value={phoneNumber}
+          onChange={(e) => {
+            setPhoneNumber(e.target.value);
+            setPhoneError("");
+          }}
+          onBlur={() => validatePhoneNumber(phoneNumber)}
+          style={styles.input}
+        />
+        {phoneError && <p style={styles.error}>{phoneError}</p>}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailError("");
+          }}
+          onBlur={() => verifyEmailReal(email)}
+          style={styles.input}
+        />
+        {emailError && <p style={styles.error}>{emailError}</p>}
+        {isCheckingEmail && <p style={styles.info}>Đang kiểm tra email...</p>}
+
+        <div style={styles.passwordContainer}>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Mật khẩu"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={styles.passwordInput}
+          />
+          <span style={styles.eyeButton} onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+          </span>
+        </div>
+
+        <button onClick={handleRegister} style={styles.button} disabled={isCheckingEmail}>
+          {isCheckingEmail ? "Vui lòng đợi..." : "Đăng ký"}
+        </button>
+
         <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}  // Đổi trạng thái của showPassword khi click
-          style={styles.eyeButton}
+          onClick={() => navigate("/login")}
+          style={{ ...styles.linkButton }}
+          onMouseOver={(e) => (e.target.style.color = "#FFD700")}
+          onMouseOut={(e) => (e.target.style.color = "#ffffff")}
         >
-          {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}  {/* Nếu showPassword là true, hiển thị icon "ẩn mắt", ngược lại hiển thị icon "mắt" */}
+          Đã có tài khoản? Đăng nhập
         </button>
       </div>
-
-      <button onClick={handleRegister} style={styles.button} disabled={isCheckingEmail}>
-        {isCheckingEmail ? "Vui lòng đợi..." : "Đăng ký"}
-      </button>
-
-      <button onClick={goToLogin} style={styles.button}>Đã có tài khoản? Đăng nhập</button> {/* Nút đăng nhập */}
     </div>
   );
 }
 
 const styles = {
-  title: {
-    fontSize: "28px",
-    fontWeight: "bold",
+  container: {
+    background: "linear-gradient(135deg, #74ebd5, #ACB6E5)",
+    height: "100vh",
+    width: "100vw",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  card: {
+    background: "rgba(255, 255, 255, 0.15)",
+    borderRadius: "20px",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    boxShadow: "0 8px 32px rgba(31, 38, 135, 0.3)",
+    padding: "40px",
+    width: "90%",
+    maxWidth: "420px",
     textAlign: "center",
-    marginBottom: "20px",
+  },
+  title: {
+    fontSize: "44px",
+    fontWeight: "bold",
+    marginBottom: "30px",
+    letterSpacing: "1.2px",
+    color: "#222222",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   input: {
     width: "100%",
-    padding: "15px",
-    borderRadius: "12px",
+    padding: "14px",
     marginBottom: "15px",
-    fontSize: "16px",
+    borderRadius: "10px",
     border: "none",
-    background: "rgba(255, 255, 255, 0.9)",
+    fontSize: "16px",
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    color: "#222222",
+    fontWeight: "500",
+    letterSpacing: "0.3px",
   },
+  passwordContainer: {
+    position: "relative",
+    width: "100%",
+    marginBottom: "15px",
+  },
+  passwordInput: {
+    width: "107%",
+    padding: "14px 44px 14px 14px", 
+    borderRadius: "10px",
+    border: "none",
+    fontSize: "16px",
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    color: "#222222",
+    fontWeight: "500",
+    letterSpacing: "0.3px",
+    boxSizing: "border-box",
+  },
+  eyeButton: {
+    position: "absolute",
+    top: "55%",
+    right: "-20px",
+    transform: "translateY(-50%)",
+    cursor: "pointer",
+    fontSize: "20px",
+    color: "#555",
+    zIndex: 2,
+  },
+
   button: {
     width: "100%",
     padding: "15px",
-    borderRadius: "12px",
-    background: "#1E90FF",
+    borderRadius: "10px",
+    backgroundColor: "#1E90FF",
     color: "#fff",
     fontSize: "18px",
     fontWeight: "bold",
     border: "none",
     cursor: "pointer",
     marginTop: "10px",
+    transition: "0.3s",
   },
-  eyeButton: {
-    position: "absolute",
-    right: "10px",
-    top: "50%",
-    transform: "translateY(-50%)",
+  linkButton: {
     background: "none",
     border: "none",
+    color: "#ffffff",
+    fontSize: "15px",
+    fontWeight: "500",
+    marginTop: "15px",
+    textDecoration: "underline",
     cursor: "pointer",
-  },
-  passwordContainer: {
-    position: "relative",
-    width: "100%",
+    transition: "color 0.3s",
   },
   error: {
-    color: "red",
-    marginTop: "-10px",
-    marginBottom: "10px",
+    color: "#ff4d4f",
     fontSize: "14px",
+    marginBottom: "10px",
   },
   info: {
-    color: "#555",
+    color: "#eeeeee",
     fontSize: "14px",
-    marginTop: "-10px",
     marginBottom: "10px",
   },
 };

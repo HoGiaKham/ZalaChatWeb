@@ -1275,15 +1275,24 @@ return (
         <div className="modal">
           <div className="modalContent">
             <h2>Thông tin cá nhân</h2>
-            {profile ? (
-              <div className="profileInfo">
-                <p><strong>Tên:</strong> {profile.name || "Chưa cập nhật"}</p>
-                <p><strong>Email:</strong> {profile.email}</p>
-                <p><strong>Số điện thoại:</strong> {profile.phoneNumber || "Chưa cung cấp"}</p>
-              </div>
-            ) : (
-              <p>Đang tải thông tin...</p>
-            )}
+{profile ? (
+  <div className="profileInfo">
+    <div className="profileField">
+      <span className="profileIcon">👤</span>
+      <span><strong>Tên:</strong> {profile.name || "Chưa cập nhật"}</span>
+    </div>
+    <div className="profileField">
+      <span className="profileIcon">📧</span>
+      <span><strong>Email:</strong> {profile.email}</span>
+    </div>
+    <div className="profileField">
+      <span className="profileIcon">📞</span>
+      <span><strong>Số điện thoại:</strong> {profile.phoneNumber || "Chưa cung cấp"}</span>
+    </div>
+  </div>
+) : (
+  <p>Đang tải thông tin...</p>
+)}
             <div className="modalButtons">
               <button
                 onClick={() => {
@@ -1354,7 +1363,7 @@ return (
       {showSharedMedia && (
         <div className="modal">
           <div className="modalContent">
-            <h2>Truyền thông đã chia sẻ</h2>
+            <h2>Ảnh đã chia sẻ</h2>
             <div className="mediaGrid">
               {(() => {
                 const mediaByDate = {};

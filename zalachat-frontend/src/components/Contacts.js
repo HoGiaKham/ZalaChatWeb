@@ -72,14 +72,12 @@ function Contacts() {
       setFriends(prev => prev.filter(friend => friend.friendId !== friendId));
     });
 
-    // Xử lý sự kiện có bạn bè mới (thông báo cho người được chấp nhận)
     socketRef.current.on("friendAdded", (newFriend) => {
       console.log("Có bạn bè mới:", newFriend);
       setFriends(prev => [...prev, newFriend]);
-      setFriendRequests(prev => prev.filter(req => req.senderId !== newFriend.friendId)); // Loại bỏ lời mời đã chấp nhận
+      setFriendRequests(prev => prev.filter(req => req.senderId !== newFriend.friendId));
     });
 
-    // Cleanup socket khi component unmount
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -121,7 +119,7 @@ function Contacts() {
     }
   };
 
-  const handleAcceptFriendRequest = async (requestId, senderId) => {
+  const handleAcceptFriendRequest = async (requestId) => {
     const tokens = validateToken();
     if (!tokens) return;
 
@@ -133,7 +131,6 @@ function Contacts() {
         { headers: { Authorization: `Bearer ${tokens.accessToken}` } }
       );
       setFriendRequests((prev) => prev.filter((req) => req.requestId !== requestId));
-      // Sau khi chấp nhận, server sẽ phát sự kiện "friendAdded" để cập nhật danh sách bạn bè
       alert("Đã chấp nhận lời mời kết bạn!");
     } catch (error) {
       console.error("Lỗi khi chấp nhận lời mời:", error);
@@ -185,45 +182,112 @@ function Contacts() {
     }
   };
 
-  return (
-    <div className="tab-container" style={{ padding: "20px" }}>
-      <h1 style={{ fontSize: "22px", fontWeight: "bold", marginBottom: "12px" }}>Danh bạ</h1>
-      <div style={{ display: "flex", marginBottom: "16px" }}>
+ return (
+  <div style={{
+    minHeight: "100vh",
+    background: "linear-gradient(to bottom right, #e6efff, #f5faff)",
+    padding: "40px 20px",
+    fontFamily: "'Segoe UI', 'Roboto', sans-serif"
+  }}>
+    <div style={{
+      maxWidth: "640px",
+      margin: "0 auto",
+      background: "rgba(255, 255, 255, 0.6)",
+      backdropFilter: "blur(15px)",
+      WebkitBackdropFilter: "blur(15px)",
+      borderRadius: "20px",
+      padding: "30px",
+      boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+      border: "1px solid rgba(255,255,255,0.3)"
+    }}>
+      <h1 style={{
+        fontSize: "26px",
+        fontWeight: "600",
+        marginBottom: "24px",
+        textAlign: "center",
+        color: "#1E2A38",
+        textShadow: "0 1px 2px rgba(0,0,0,0.1)"
+      }}>
+        Danh bạ
+      </h1>
+
+      {/* Input thêm bạn */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "16px",
+        background: "rgba(255, 255, 255, 0.8)",
+        border: "1px solid #cfe2ff",
+        borderRadius: "14px",
+        marginBottom: "28px",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)"
+      }}>
         <input
           type="text"
-          placeholder="Nhập email để kết bạn"
+          placeholder="📧 Nhập email để kết bạn..."
           value={emailInput}
           onChange={(e) => setEmailInput(e.target.value)}
-          style={styles.input}
+          style={{
+            flex: 1,
+            padding: "14px 16px",
+            borderRadius: "10px",
+            fontSize: "16px",
+            border: "1px solid #ddd",
+            marginRight: "12px",
+            outline: "none",
+            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.03)",
+            transition: "border 0.2s ease-in-out"
+          }}
           disabled={loading}
         />
-        <button onClick={handleAddFriend} style={styles.button} disabled={loading}>
+        <button
+          onClick={handleAddFriend}
+          style={{
+            padding: "14px 20px",
+            borderRadius: "10px",
+            background: "#1E90FF",
+            color: "#fff",
+            fontWeight: "600",
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            transition: "background 0.3s"
+          }}
+          disabled={loading}
+        >
           {loading ? "Đang xử lý..." : "Thêm"}
         </button>
       </div>
-      <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: "16px 0 8px" }}>
-        Lời mời kết bạn
-      </h2>
+
+      {/* Lời mời kết bạn */}
+      <h2 style={{
+        fontSize: "18px",
+        fontWeight: "600",
+        margin: "0 0 10px",
+        color: "#1E2A38"
+      }}>💌 Lời mời kết bạn</h2>
       {loading ? (
         <p style={{ fontSize: "16px", color: "#666" }}>Đang tải...</p>
       ) : friendRequests.length > 0 ? (
         friendRequests.map((req) => (
           <div key={req.requestId} style={styles.requestItem}>
-            <p style={{ fontSize: "16px" }}>{req.senderName || req.senderId}</p>
+            <p style={{ fontSize: "16px", fontWeight: "500", color: "#333" }}>
+              {req.senderName || req.senderId}
+            </p>
             <div>
               <button
                 onClick={() => handleAcceptFriendRequest(req.requestId, req.senderId)}
                 style={{ ...styles.button, background: "#1E90FF", marginRight: "8px" }}
                 disabled={loading}
               >
-                Chấp nhận
+                ✔ Chấp nhận
               </button>
               <button
                 onClick={() => handleRejectFriendRequest(req.requestId)}
                 style={{ ...styles.button, background: "#FF4C4C" }}
                 disabled={loading}
               >
-                Từ chối
+                ✖ Từ chối
               </button>
             </div>
           </div>
@@ -231,9 +295,14 @@ function Contacts() {
       ) : (
         <p style={{ fontSize: "16px", color: "#666" }}>Không có lời mời kết bạn</p>
       )}
-      <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: "16px 0 8px" }}>
-        Danh sách bạn bè
-      </h2>
+
+      {/* Danh sách bạn bè */}
+      <h2 style={{
+        fontSize: "18px",
+        fontWeight: "600",
+        margin: "24px 0 10px",
+        color: "#1E2A38"
+      }}>👥 Danh sách bạn bè</h2>
       {loading ? (
         <p style={{ fontSize: "16px", color: "#666" }}>Đang tải...</p>
       ) : friends.length > 0 ? (
@@ -242,13 +311,15 @@ function Contacts() {
             <div style={styles.avatarPlaceholder}>
               {(friend.friendName || friend.friendId)[0].toUpperCase()}
             </div>
-            <p style={{ fontSize: "16px" }}>{friend.friendName || friend.friendId}</p>
+            <p style={{ fontSize: "16px", fontWeight: "500", color: "#333" }}>
+              {friend.friendName || friend.friendId}
+            </p>
             <button
               onClick={() => handleRemoveFriend(friend.friendId)}
               style={{ ...styles.button, background: "#FF4C4C", marginLeft: "auto" }}
               disabled={loading}
             >
-              Hủy kết bạn
+              🗑 Hủy kết bạn
             </button>
           </div>
         ))
@@ -256,10 +327,42 @@ function Contacts() {
         <p style={{ fontSize: "16px", color: "#666" }}>Chưa có bạn bè</p>
       )}
     </div>
-  );
+  </div>
+);
 }
 
 const styles = {
+  fullBackground: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #dbeafe 0%, #f0f4ff 100%)",
+    padding: "40px 0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "start",
+  },
+  mainContainer: {
+    background: "rgba(255, 255, 255, 0.85)",
+    padding: "30px",
+    borderRadius: "16px",
+    width: "90%",
+    maxWidth: "600px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "20px",
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    margin: "20px 0 10px",
+  },
+  textMuted: {
+    fontSize: "16px",
+    color: "#666",
+  },
   input: {
     flex: 1,
     padding: "12px",

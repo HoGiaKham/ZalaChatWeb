@@ -131,7 +131,7 @@ function Settings() {
       if (!tokens || !tokens.accessToken) {
         setError("Bạn cần đăng nhập lại để thay đổi mật khẩu.");
         return;
-      }
+    }
 
       // Gửi yêu cầu API để thay đổi mật khẩu
       await axios.post(
@@ -158,11 +158,11 @@ function Settings() {
   };
 
   return (
-    <div className="tab-container" style={isDarkMode ? darkModeStyles : lightModeStyles}>
+    <div className="tab-container" style={{ ... (isDarkMode ? darkModeStyles : lightModeStyles), overflowY: "hidden" }}>
       <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px" }}>
         Cài đặt
       </h1>
-      <div>
+      <div style={{ overflowY: "hidden" }}>
         {settingsOptions.map((item) => (
           <div key={item.id} style={styles.option} onClick={() => handleOptionClick(item.label)}>
             <span style={styles.icon}>{item.icon}</span>
@@ -184,8 +184,9 @@ function Settings() {
                     key={index}
                     style={{
                       ...modalStyles.option,
-                      backgroundColor: notificationTime === time ? "#1E90FF" : "transparent",
-                      color: notificationTime === time ? "#fff" : "#000",
+                      backgroundColor: notificationTime === time ? "#6D28D9" : "transparent",
+                      color: notificationTime === time ? "#FFFFFF" : "#4B5563",
+                      ...modalStyles.optionHover,
                     }}
                     onClick={() => handleNotificationTimeChange(time)}
                   >
@@ -198,18 +199,18 @@ function Settings() {
                 <Switch
                   onChange={toggleNotification}
                   checked={isNotificationOn}
-                  offColor="#ccc"
-                  onColor="#4CAF50"
+                  offColor="#D1D5DB"
+                  onColor="#10B981"
                   uncheckedIcon={false}
                   checkedIcon={false}
                   height={20}
                   width={48}
                 />
-                <span>{isNotificationOn ? "Bật" : "Tắt"}</span>
+                <span style={modalStyles.switchLabel}>{isNotificationOn ? "Bật" : "Tắt"}</span>
               </div>
-              <div style={modalStyles.Container}>
+              <div style={modalStyles.buttonContainer}>
                 <button style={modalStyles.button} onClick={closeModal}>Đóng</button>
-                <button style={{ ...modalStyles.button, backgroundColor: "#4CAF50" }} onClick={saveSettings}>Lưu</button>
+                <button style={{ ...modalStyles.button, ...modalStyles.saveButton }} onClick={saveSettings}>Lưu</button>
               </div>
             </div>
           </div>
@@ -225,14 +226,14 @@ function Settings() {
               <Switch
                 onChange={toggleTheme}
                 checked={isDarkMode}
-                offColor="#ccc"
-                onColor="#4CAF50"
+                offColor="#D1D5DB"
+                onColor="#10B981"
                 uncheckedIcon={false}
                 checkedIcon={false}
                 height={20}
                 width={48}
               />
-              <span>{isDarkMode ? "Chế độ tối" : "Chế độ sáng"}</span>
+              <span style={modalStyles.switchLabel}>{isDarkMode ? "Chế độ tối" : "Chế độ sáng"}</span>
             </div>
             <div style={modalStyles.buttonContainer}>
               <button style={modalStyles.button} onClick={closeThemeModal}>Đóng</button>
@@ -244,42 +245,45 @@ function Settings() {
       {/* Security Modal */}
       {isSecurityModalOpen && (
         <div style={modalStyles.overlay}>
-          <div style={modalStyles.modal}>
-            <h2 style={modalStyles.title}>Cài đặt bảo mật</h2>
-            <p style={modalStyles.description}>Đổi mật khẩu của bạn.</p>
-            <div style={modalStyles.options}>
-              <div style={modalStyles.option}>
+          <div style={modalStyles.securityModal}>
+            <h2 style={modalStyles.securityTitle}>Cài đặt bảo mật</h2>
+            <p style={modalStyles.securityDescription}>Đổi mật khẩu của bạn.</p>
+            <div style={modalStyles.securityOptions}>
+              <div style={modalStyles.securityInputContainer}>
+                <label style={modalStyles.securityLabel}>Mật khẩu cũ</label>
                 <input
                   type="password"
-                  placeholder="Mật khẩu cũ"
+                  placeholder="Nhập mật khẩu cũ"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  style={modalStyles.input}
+                  style={modalStyles.securityInput}
                 />
               </div>
-              <div style={modalStyles.option}>
+              <div style={modalStyles.securityInputContainer}>
+                <label style={modalStyles.securityLabel}>Mật khẩu mới</label>
                 <input
                   type="password"
-                  placeholder="Mật khẩu mới"
+                  placeholder="Nhập mật khẩu mới"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  style={modalStyles.input}
+                  style={modalStyles.securityInput}
                 />
               </div>
-              <div style={modalStyles.option}>
+              <div style={modalStyles.securityInputContainer}>
+                <label style={modalStyles.securityLabel}>Xác nhận mật khẩu mới</label>
                 <input
                   type="password"
                   placeholder="Xác nhận mật khẩu mới"
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  style={modalStyles.input}
+                  style={modalStyles.securityInput}
                 />
               </div>
               {error && <p style={modalStyles.error}>{error}</p>}
             </div>
             <div style={modalStyles.buttonContainer}>
               <button style={modalStyles.button} onClick={closeSecurityModal}>Đóng</button>
-              <button style={{ ...modalStyles.button, backgroundColor: "#4CAF50" }} onClick={handlePasswordChange}>Lưu thay đổi</button>
+              <button style={{ ...modalStyles.button, ...modalStyles.saveButton }} onClick={handlePasswordChange}>Lưu thay đổi</button>
             </div>
           </div>
         </div>
@@ -301,7 +305,7 @@ function Settings() {
                 <strong>Nhà phát triển:</strong> Nhóm 7
               </p>
               <p style={modalStyles.description}>
-              <strong>Liên hệ:</strong> <a href="mailto:support@chatapp.com">support@chatapp.com</a>
+              <strong>Liên hệ:</strong> <a href="mailto:support@chatapp.com" style={modalStyles.link}>support@chatapp.com</a>
               </p>
               <p style={modalStyles.description}>
                 <strong>Mô tả:</strong> Ứng dụng trò chuyện tiện lợi, an toàn và dễ sử dụng.
@@ -321,47 +325,54 @@ const styles = {
   option: {
     display: "flex",
     alignItems: "center",
-    background: "rgba(255, 255, 255, 0.9)",
-    padding: "14px",
+    background: "linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)",
+    padding: "16px",
     borderRadius: "12px",
-    marginBottom: "12px",
+    marginBottom: "16px",
     cursor: "pointer",
-    transition: "background-color 0.3s ease",
+    transition: "all 0.3s ease",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+    overflowY: "hidden",
   },
   icon: {
-    marginRight: "12px",
-    fontSize: "22px",
-    color: "#1E90FF",
+    marginRight: "16px",
+    fontSize: "24px",
+    color: "#9333EA",
   },
   label: {
-    fontSize: "16px",
-    color: "#000",
+    fontSize: "18px",
+    color: "#1E293B",
+    fontWeight: "500",
   },
   input: {
     width: "100%",
-    padding: "10px",
-    marginBottom: "12px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
+    padding: "12px",
+    marginBottom: "16px",
+    borderRadius: "8px",
+    border: "1px solid #D1D5DB",
+    fontSize: "16px",
+    transition: "border-color 0.3s ease",
+    backgroundColor: "#FFFFFF",
   },
   error: {
-    color: "red",
+    color: "#DC2626",
     fontSize: "14px",
-    marginTop: "10px",
+    marginTop: "8px",
   },
 };
 
 const darkModeStyles = {
-  backgroundColor: "#333",
-  color: "#fff",
+  backgroundColor: "#111827",
+  color: "#F9FAFB",
   minHeight: "100vh",
+  overflowY: "hidden",
 };
 
 const lightModeStyles = {
-  backgroundColor: "#fff",
-  color: "#000",
+  backgroundColor: "#F3F4F6",
+  color: "#1E293B",
   minHeight: "100vh",
+  overflowY: "hidden",
 };
 
 const modalStyles = {
@@ -371,58 +382,112 @@ const modalStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 50,
+    overflowY: "hidden",
   },
   modal: {
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    width: "350px",
+    background: "linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%)",
+    padding: "24px",
+    borderRadius: "12px",
+    width: "400px",
     textAlign: "center",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+    animation: "fadeIn 0.3s ease",
+    overflowY: "hidden",
   },
-  title: {
-    fontSize: "20px",
-    marginBottom: "20px",
-    fontWeight: "bold",
+  securityModal: {
+    background: "linear-gradient(135deg, #E0F2FE 0%, #DBEAFE 100%)",
+    padding: "24px",
+    borderRadius: "15px",
+    width: "450px",
+    textAlign: "center",
+    boxShadow: "0 15px 30px rgba(59, 130, 246, 0.3)",
+    animation: "fadeIn 0.3s ease",
+    overflow: "hidden", 
   },
-  description: {
-    fontSize: "16px",
-    marginBottom: "20px",
-    textAlign: "left",
-  lineHeight: "1.5", 
+  securityTitle: {
+    fontSize: "35px", 
+    marginBottom: "-15px",
+    fontWeight: "600",
+    color: "#1E40AF",
   },
-  options: {
+  securityDescription: {
+    fontSize: "18px", 
+    marginBottom: "5px",
+    textAlign: "center",
+    lineHeight: "1.5",
+    color: "#64748B",
+  },
+  securityOptions: {
     display: "flex",
     flexDirection: "column",
     marginBottom: "20px",
+    overflow: "hidden",
   },
-  option: {
-    marginBottom: "10px",
+  securityInputContainer: {
+    marginBottom: "16px",
+    textAlign: "left",
+    overflow: "hidden", 
+  },
+  securityLabel: {
+    fontSize: "16px", 
+    color: "#64748B",
+    marginBottom: "6px",
+    display: "block",
+  },
+  securityInput: {
+    width: "100%",
+    padding: "14px", 
+    borderRadius: "8px",
+    border: "1px solid #CBD5E1",
+    fontSize: "16px", 
+    backgroundColor: "#FFFFFF",
+    boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.05)",
+    transition: "border-color 0.3s ease",
+    height: "30px", 
   },
   buttonContainer: {
     display: "flex",
     justifyContent: "space-between",
+    overflow: "hidden", 
   },
   button: {
-    padding: "10px 20px",
+    padding: "12px 24px",
     fontSize: "16px",
-    backgroundColor: "#1E90FF",
-    color: "#fff",
+    background: "linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%)",
+    color: "#FFFFFF",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     cursor: "pointer",
-    transition: "background-color 0.3s",
+    transition: "background 0.3s ease",
+    overflow: "hidden", 
+  },
+  saveButton: {
+    background: "linear-gradient(90deg, #10B981 0%, #34D399 100%)",
   },
   checkmark: {
-    fontSize: "20px",
-    color: "#fff",
+    fontSize: "22px",
+    color: "#FFFFFF",
   },
   switchContainer: {
-    marginBottom: "20px",
+    marginBottom: "24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden", 
+  },
+  switchLabel: {
+    marginLeft: "12px",
+    color: "#6B7280",
+  },
+  link: {
+    color: "#3B82F6",
+    textDecoration: "underline",
+    transition: "color 0.3s ease",
   },
 };
 
