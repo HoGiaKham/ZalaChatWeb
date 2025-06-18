@@ -1,0 +1,15 @@
+# Ignore environment files
+.env
+zalachat-backend/.env
+zalachat-frontend/.env
+
+# Ignore node_modules
+node_modules/
+zalachat-backend/node_modules/
+zalachat-frontend/node_modules/
+
+# Ignore log files
+*.log
+
+# Optional: ignore uploads nếu không muốn push ảnh thật
+zalachat-backend/uploads/
