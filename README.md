@@ -45,16 +45,16 @@ ZalaChat là một ứng dụng chat thời gian thực với đầy đủ tính
 
 
 - git clone https://github.com/HoGiaKham/ZalaChatWeb.git
-- cd ZalaChatWeb
+- cd ZalaChatWeb-main
 - npm install simple-peer
 ### 2. Backend (Node.js + Express + AWS SDK)
 - cd zalachat-backend
 - npm install
 - cp .env.example .env
 - node src/server.js
-- node src/server.js
 ### 3. Frontend (ReactJS)
-- cd ../zalachat-frontend
+- new terminal
+- cd zalachat-frontend
 - npm install
 - cp env.example .env
 - npm start
